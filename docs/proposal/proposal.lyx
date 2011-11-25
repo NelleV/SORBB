@@ -1,0 +1,265 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Matching and retrieval of smooth objects
+\end_layout
+
+\begin_layout Author
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+Vadim Kantorov
+\backslash
+
+\backslash
+{
+\backslash
+tt vadim.kantorov@gmail.com} 
+\backslash
+and Nelle Varoquaux
+\backslash
+
+\backslash
+{
+\backslash
+tt nelle.varoquaux@gmail.com}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Implementation plan
+\end_layout
+
+\begin_layout Enumerate
+Extracting a foreground object
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Segmentation into super-pixels using global probability of boundary detector
+ (gPb)
+\end_layout
+
+\begin_layout Enumerate
+Super-pixels background / forground classification trained on 300 annotated
+ pictures
+\end_layout
+
+\begin_layout Enumerate
+Grouping super-pixels using connected components (small components are to
+ be removed)
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Building a (several-scale) descriptor for an extracted object.
+ The proposed descriptor consists of two parts:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+HoG descriptors at centers that are uniformly sampled from boundaries
+\end_layout
+
+\begin_layout Enumerate
+Occupancy grid (a table with proportions of pixels belonging to the foreground
+ in a given patch)
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Retrieval
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Bag-of-boundaries (BoB) - an approach similar to bag-of-words (BoW)
+\end_layout
+
+\begin_layout Enumerate
+Pruning retrieval results by fitting a loose homography
+\end_layout
+
+\begin_layout Enumerate
+Ranking using corrected tf-idf (as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+
+\end_inset
+
+)
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Dataset
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Sculptures 6K
+\series default
+ – the dataset of 6340 images used in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+
+\end_inset
+
+ with ground truth annotation for twenty sculptures and their viewpoints,
+ and consisting of works principally by Moore and Rodin.
+ The dataset contains some distractor images to be used as negative examples.
+ The dataset specifies a training/test split that we're going to use to
+ assess the system performance.
+ The dataset will be obtained from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-2"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Experiments and evaluation
+\end_layout
+
+\begin_layout Standard
+We'll report mAP over a reasonable number of queries (70 queries used in
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+
+\end_inset
+
+, we'll see if we can do as many).
+ Baseline with BoW might be implemented if time permits.
+\end_layout
+
+\begin_layout Section
+Work sharing
+\end_layout
+
+\begin_layout Standard
+The project will be conducted in a group of two.
+ Every team member will take part in implementing every stage of the system
+ pipeline.
+ We'll also do pair programming sessions to share experience and pick next
+ actionable items.
+\end_layout
+
+\begin_layout Bibliography
+\labelwidthstring References
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+R.
+ Arandjelovic, A.
+ Zisserman, Smooth Object Retrieval using a Bag of Boundaries, ICCV 2011
+\end_layout
+
+\begin_layout Bibliography
+\labelwidthstring References
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-2"
+
+\end_inset
+
+Sculptures 6K dataset, http://www.robots.ox.ac.uk/~vgg/data/sculptures6k/
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
