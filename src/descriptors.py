@@ -136,15 +136,21 @@ def compute_boundary_desc(image, mask, points):
     features = []
     for patch, mask_patch in gen:
         resized_patch = imresize(patch, (32, 32))
-        feature = np.concatenate((hog(resized_patch),
-                                  np.array(occupancy_grid(patch))),
+
+        # HOG
+        patch_hog = hog(resized_patch)
+        # Normalize
+        patch_hog = patch_hog / np.sqrt((patch_hog ** 2).sum())
+        patch_occupancy_grid = np.array(occupancy_grid(patch))
+        patch_occupancy_grid =  patch_occupancy_grid / np.abs(occupancy_grid(patch)).sum()
+
+        feature = np.concatenate((patch_hog,
+                                  np.sqrt(patch_occupancy_grid)),
                                  axis=0)
 
         features.append(feature)
 
     return features
-
-
 
 
 if __name__ == "__main__":
@@ -157,10 +163,6 @@ if __name__ == "__main__":
     gen = load.load_data()
     _, _ = gen.next()
     im, mask = gen.next()
-    points = mem.cache(get_interest_points)(mask, min_dist=35)
+    points = mem.cache(get_interest_points)(mask, min_dist=15)
 
     features = compute_boundary_desc(im, mask, points)
-
-
-
-
