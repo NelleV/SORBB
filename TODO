@@ -1,4 +1,2 @@
 Normalise the HOG and occupancy grid
-The descriptors are computed at the smallest scale possible. Needs to compute
-them at different scales as mentionned in the article: 1, 4 and 16 times 1/10
 

@@ -1,7 +1,9 @@
 import numpy as np
+from scipy.misc import imresize
 
 from sklearn.metrics.pairwise import euclidean_distances
 from skimage.feature.hog import hog
+
 
 def get_interest_points(calc, min_dist=40):
     """
@@ -41,9 +43,26 @@ def get_interest_points(calc, min_dist=40):
     return np.array(interest_points)
 
 
-def get_patch(image, mask, points):
+def compute_foreground_area(mask):
     """
-    Creates the patches for each interest points
+    Computes the size of the foreground area
+
+    params
+    ------
+        mask: ndarray of shape (., .)
+
+    returns
+    -------
+        min of height and width
+    """
+    w = mask.argmax(axis=0).max() - mask.argmin(axis=0).min() 
+    h = mask.argmax(axis=1).max() - mask.argmin(axis=1).min()
+    return min([h, w])
+
+
+def get_patch(image, mask, points, scales=[1, 4, 16]):
+    """
+    Creates the patches for each interest points at all desired scales.
 
     params
     ------
@@ -56,12 +75,17 @@ def get_patch(image, mask, points):
 
     """
     im = image.mean(axis=2)
-    for point in points:
-        # Let's first start by creating the patches
-        point = points[1, :]
-        patch = im[point[0] - 16:point[0] + 16, point[1] - 16:point[1] + 16]
-        mask_patch = mask[point[0] - 16:point[0] + 16, point[1] - 16:point[1] + 16]
-        yield patch, mask_patch
+    size = compute_foreground_area(mask) / 20
+    # FIXME what happens when the mask goes outside of the image ?
+    for scale in scales:
+        scale = scale * size
+        for point in points:
+            patch = im[point[0] - scale:point[0] + scale,
+                       point[1] - scale:point[1] + scale]
+            mask_patch = mask[point[0] - scale:point[0] + scale,
+                              point[1] - scale:point[1] + scale]
+            if patch.any():
+                yield patch, mask_patch
 
 
 def occupancy_grid(patch):
@@ -70,7 +94,7 @@ def occupancy_grid(patch):
 
     params
     ------
-        patch: ndarray of shape 16, 16
+        patch: ndarray of shape N, N
 
     returns
     --------
@@ -81,13 +105,13 @@ def occupancy_grid(patch):
     [1]_ Smooth Object Retrieval using a Bag of Boundaries
     """
     feature = []
-    feature.append(patch[:16, :16].sum() / 256)
-    feature.append(patch[:16, 16:].sum() / 256)
-    feature.append(patch[16:, :16].sum() / 256)
-    feature.append(patch[:16, 16:].sum() / 256)
+    w, h = patch.shape[0] / 2, patch.shape[1] / 2
+    feature.append(patch[:w, :h].sum() / (h * w))
+    feature.append(patch[:w, h:].sum() / (h * w))
+    feature.append(patch[w:, :h].sum() / (h * w))
+    feature.append(patch[:w, h:].sum() / (h * w))
 
     return feature
-
 
 
 def compute_boundary_desc(image, mask, points):
@@ -111,10 +135,12 @@ def compute_boundary_desc(image, mask, points):
 
     features = []
     for patch, mask_patch in gen:
-        feature = []
-        feature.append(hog(patch))
-        feature.append(occupancy_grid(patch))
-        features.append(np.array(feature).flatten())
+        resized_patch = imresize(patch, (32, 32))
+        feature = np.concatenate((hog(resized_patch),
+                                  np.array(occupancy_grid(patch))),
+                                 axis=0)
+
+        features.append(feature)
 
     return features
 
@@ -131,7 +157,7 @@ if __name__ == "__main__":
     gen = load.load_data()
     _, _ = gen.next()
     im, mask = gen.next()
-    points = mem.cache(get_interest_points)(mask, min_dist=40)
+    points = mem.cache(get_interest_points)(mask, min_dist=35)
 
     features = compute_boundary_desc(im, mask, points)
 
