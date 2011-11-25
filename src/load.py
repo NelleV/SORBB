@@ -17,12 +17,10 @@ def load_data():
     """
     """
     f = open(train_names, 'r')
-    for sculpture in f.readlines(1):
+    for sculpture in f.readlines():
         im = imread(os.path.join(data_train_path, sculpture)[:-1])[::-1]
         calc = imread(os.path.join(
                             masks_train_path,
-                            sculpture[:-4] + 'png')).astype(int)
+                            sculpture[:-4] + 'png'))
         yield im, calc
 
-if __name__ == "__main__":
-    im = load_data() 
