@@ -1,1 +1,4 @@
-Expects the Segmentation code to be found in a folder named BSR/grouping/lib
+
+Expects to find the dataset in src/data/sculptures6k
+Expects to find the gPb masks in src/data/masks
+
