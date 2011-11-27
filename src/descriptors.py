@@ -27,7 +27,7 @@ def get_interest_points(calc, min_dist=40):
     [1] http://www.cs.berkeley.edu/~malik/papers/BMP-shape.pdf (appendix B)
     """
     # Calculates the gradient
-    delta = np.diff(calc, axis=-2)[:,:-1] + np.diff(calc, axis=-1)[:-1,:]
+    delta = np.diff(calc, axis=-2)[:, :-1] + np.diff(calc, axis=-1)[:-1, :]
 
     # FIXME there must be a faster way to do that, but lets do it quick and
     # ugly for the sake of the project.
@@ -37,7 +37,8 @@ def get_interest_points(calc, min_dist=40):
             if delta[i, j]:
                 point = [i, j]
                 if not interest_points or \
-                   euclidean_distances(point, interest_points).min() > min_dist:
+                   euclidean_distances(point,
+                                       interest_points).min() > min_dist:
                     interest_points.append([i, j])
 
     return np.array(interest_points)
@@ -142,7 +143,9 @@ def compute_boundary_desc(image, mask, points):
         # Normalize
         patch_hog = patch_hog / np.sqrt((patch_hog ** 2).sum())
         patch_occupancy_grid = np.array(occupancy_grid(patch))
-        patch_occupancy_grid =  patch_occupancy_grid / np.abs(occupancy_grid(patch)).sum()
+        patch_occupancy_grid = patch_occupancy_grid / np.abs(
+                                                        occupancy_grid(
+                                                            patch)).sum()
 
         feature = np.concatenate((patch_hog,
                                   np.sqrt(patch_occupancy_grid)),

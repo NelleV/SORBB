@@ -1,9 +1,12 @@
-from histograms import *
+import numpy as np
+from itertools import islice
+
+from sklearn.metrics.pairwise import euclidean_distances
+
 import load
 import vocabulary
-import numpy as np
-from itertools import *
-from sklearn.metrics.pairwise import euclidean_distances
+from histograms import compute_histogram_database, compute_histogram
+
 
 def candidates_by_histograms(im, mask, histogram_database, vocabulary):
     query_histogram = compute_histogram(im, mask, vocabulary)
@@ -22,6 +25,9 @@ if __name__ == "__main__":
     im, mask = gen.next()
     im, mask = gen.next()
 
-    candidates = candidates_by_histograms(im, mask, histogram_database, vocabulary)
+    candidates = candidates_by_histograms(im,
+                                          mask,
+                                          histogram_database,
+                                          vocabulary)
 
     print('asd')

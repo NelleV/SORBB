@@ -1,10 +1,11 @@
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import normalize
-import numpy as np
-from itertools import *
-from descriptors import *
-from load import *
+from itertools import islice
 import math
+
+from load import load_data
+from descriptors import compute_boundary_desc, get_interest_points
+
+from sklearn.cluster import KMeans
+
 
 def compute_vocabulary():
     descriptors = compute_descriptors_from_all_training_images()
@@ -15,6 +16,7 @@ def compute_vocabulary():
 
     return km.cluster_centers_
 
+
 def clean(descriptors):
     for i in range(len(descriptors)):
         for j in range(len(descriptors[i])):
@@ -22,9 +24,10 @@ def clean(descriptors):
                 descriptors[i][j] = 0
     return descriptors
 
+
 def compute_descriptors_from_all_training_images():
     def gen():
-        for im,mask in islice(load_data(), 1, 3):
+        for im, mask in islice(load_data(), 1, 3):
             interestPoints = get_interest_points(mask)
             descriptors = compute_boundary_desc(im, mask, interestPoints)
             yield descriptors
