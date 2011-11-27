@@ -55,7 +55,7 @@ def compute_foreground_area(mask):
     -------
         min of height and width
     """
-    w = mask.argmax(axis=0).max() - mask.argmin(axis=0).min() 
+    w = mask.argmax(axis=0).max() - mask.argmin(axis=0).min()
     h = mask.argmax(axis=1).max() - mask.argmin(axis=1).min()
     return min([h, w])
 

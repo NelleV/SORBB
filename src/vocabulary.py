@@ -9,7 +9,7 @@ import math
 def compute_vocabulary():
     descriptors = compute_descriptors_from_all_training_images()
     descriptors = clean(descriptors)
-        
+
     km = KMeans(k=250)
     km.fit(descriptors)
 
@@ -28,5 +28,5 @@ def compute_descriptors_from_all_training_images():
             interestPoints = get_interest_points(mask)
             descriptors = compute_boundary_desc(im, mask, interestPoints)
             yield descriptors
-    
+
     return sum(gen(), [])
