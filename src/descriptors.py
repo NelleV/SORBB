@@ -75,7 +75,10 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
     --------
         patch, mask_patch: tuple of ndarray
     """
-    im = image.mean(axis=2)
+    if len(image.shape) == 3:
+        im = image.mean(axis=2)
+    else:
+        im = image
     size = compute_foreground_area(mask) / 20
     # FIXME what happens when the mask goes outside of the image ?
     for scale in scales:

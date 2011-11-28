@@ -4,7 +4,6 @@ from itertools import islice
 from sklearn.metrics.pairwise import euclidean_distances
 
 import load
-import vocabulary
 from histograms import compute_histogram_database, compute_histogram
 
 
@@ -18,8 +17,6 @@ if __name__ == "__main__":
     from sklearn.externals.joblib import Memory
     mem = Memory(cachedir='.')
 
-    cluster_centers = mem.cache(vocabulary.compute_vocabulary)(max_im=5)
-    cluster_centers.dump('./data/vocabulary.mat')
     vocabulary = np.load('./data/vocabulary.mat')
 
     histogram_database = mem.cache(compute_histogram_database)(vocabulary,
