@@ -1,10 +1,11 @@
 import numpy as np
+
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.preprocessing import normalize
-from itertools import *
-from load import *
-from descriptors import *
-from vocabulary import *
+
+from load import load_data
+from descriptors import get_interest_points, compute_boundary_desc
+
 
 def compute_histogram(im, mask, vocabulary):
     words = get_visual_words(im, mask, vocabulary)
@@ -16,10 +17,10 @@ def compute_histogram(im, mask, vocabulary):
     histogram = normalize(histogram, 'l1')[0]
     return histogram
 
+
 def get_visual_words(im, mask, vocabulary):
     interest_points = get_interest_points(mask)
     descriptors = compute_boundary_desc(im, mask, interest_points)
-    descriptors = np.array(clean(descriptors))
     desc_count = len(descriptors)
     words = np.zeros(desc_count)
     if desc_count > 0:
@@ -28,7 +29,14 @@ def get_visual_words(im, mask, vocabulary):
 
     return words
 
-def compute_histogram_database(vocabulary):
-    data = islice(load_data(), 1, 3)
-    res = np.array([compute_histogram(im, mask, vocabulary) for im, mask in data])
-    return res
+
+def compute_histogram_database(vocabulary, max_im=None):
+    res = []
+    gen = load_data()
+    for i, (im, mask) in enumerate(gen):
+        if max_im and max_im < i:
+            break
+        res.append(compute_histogram(im,
+                                mask,
+                                vocabulary))
+    return np.array(res)

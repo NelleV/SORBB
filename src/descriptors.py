@@ -73,7 +73,7 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
 
     returns
     --------
-
+        patch, mask_patch: tuple of ndarray
     """
     im = image.mean(axis=2)
     size = compute_foreground_area(mask) / 20
@@ -85,7 +85,13 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
                        point[1] - scale:point[1] + scale]
             mask_patch = mask[point[0] - scale:point[0] + scale,
                               point[1] - scale:point[1] + scale]
-            if patch.any():
+            # mask_patch and patch should be of the same patch, but who knows
+            # ? Let's only return them if they are of the same size.
+            if patch.any() and patch.shape == mask_patch.shape:
+                # If the minimum size of the patch is 1, no way to compute the
+                # HOG. Let's ditch those patch too.
+                if min(patch.shape) == 1 or min(mask_patch.shape) == 1:
+                    continue
                 yield patch, mask_patch
 
 
@@ -158,13 +164,15 @@ def compute_boundary_desc(image, mask, points):
 
 if __name__ == "__main__":
     import load
-    import matplotlib.pyplot as plt
 
     from sklearn.externals.joblib import Memory
     mem = Memory(cachedir='.')
 
     gen = load.load_data()
-    _, _ = gen.next()
+    for i in range(4):
+        print i
+        im, mask = gen.next()
+
     im, mask = gen.next()
     points = mem.cache(get_interest_points)(mask, min_dist=15)
 
