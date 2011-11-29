@@ -32,11 +32,18 @@ def load_data(test=False):
     for sculpture in f.readlines():
         im = imread(os.path.join(data_train_path, sculpture)[:-1])[::-1]
         if test:
-            calc = imread(os.path.join(
+            try:
+                calc = imread(os.path.join(
                                     masks_test_path,
                                     sculpture[:-4] + 'png'))
+            except IOError:
+                # If the mask is not here, skip this image
+                continue
         else:
-            calc = imread(os.path.join(
-                                    masks_train_path,
-                                    sculpture[:-4] + 'png'))
+            try:
+                calc = imread(os.path.join(
+                                        masks_train_path,
+                                        sculpture[:-4] + 'png'))
+            except IOError:
+                continue
         yield im, calc

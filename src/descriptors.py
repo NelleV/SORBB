@@ -93,7 +93,7 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
             if patch.any() and patch.shape == mask_patch.shape:
                 # If the minimum size of the patch is 1, no way to compute the
                 # HOG. Let's ditch those patch too.
-                if min(patch.shape) == 1 or min(mask_patch.shape) == 1:
+                if min(patch.shape) < 32 or min(mask_patch.shape) < 32:
                     continue
                 yield patch, mask_patch
 
@@ -150,7 +150,9 @@ def compute_boundary_desc(image, mask, points):
         # HOG
         patch_hog = hog(resized_patch)
         # Normalize
-        patch_hog = patch_hog / np.sqrt((patch_hog ** 2).sum())
+        if (patch_hog ** 2).sum() != 0:
+            patch_hog = patch_hog / np.sqrt((patch_hog ** 2).sum())
+
         patch_occupancy_grid = np.array(occupancy_grid(patch))
         patch_occupancy_grid = patch_occupancy_grid / np.abs(
                                                         occupancy_grid(

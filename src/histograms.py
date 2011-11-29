@@ -37,6 +37,6 @@ def compute_histogram_database(vocabulary, max_im=None):
         if max_im and max_im < i:
             break
         res.append(compute_histogram(im,
-                                mask,
-                                vocabulary))
+                                     mask,
+                                     vocabulary))
     return np.array(res)
