@@ -30,6 +30,29 @@ def get_visual_words(im, mask, vocabulary):
     return words
 
 
+def compute_visual_words(descriptors, vocabulary):
+    """
+    Computes the visuals words
+
+    params
+    ------
+        descriptor: ndarray
+
+        vocabulary: ndarray
+
+    returns
+    -------
+
+    """
+    desc_count = len(descriptors)
+    if desc_count > 0:
+        dists = euclidean_distances(descriptors, vocabulary)
+        words = dists.argmin(axis=1)
+        return words
+    else:
+        return None
+
+
 def compute_histogram_database(vocabulary, max_im=None):
     res = []
     gen = load_data()

@@ -13,6 +13,35 @@ def candidates_by_histograms(im, mask, histogram_database, vocabulary):
     return islice(dists[0].argsort(), 0, 200)
 
 
+def search(visual_words, postings, max_im=20):
+    """
+    Search for the best matches in the database
+
+    params
+    ------
+        visual_words: ndarray
+
+        postings: ndarray
+
+        max_im: int, optional
+            number of results to return
+
+    returns
+    -------
+        results: ndarray (., 2)
+            first columns containes the index of the images retrieved, the
+            second the tfidfs scores
+    """
+    results = postings[visual_words].copy()
+    tf = visual_words.astype(float) / len(visual_words)
+    idf = np.log(postings.shape[1] / results.sum(axis=1))
+    tfidfs = np.dot(tf * idf, results)
+    order = tfidfs.argsort()
+    tfidfs.sort()
+    results = np.concatenate((order, tfidfs), axis=1)
+    return results[::-1][:max_im]
+
+
 if __name__ == "__main__":
     from sklearn.externals.joblib import Memory
     mem = Memory(cachedir='.')
