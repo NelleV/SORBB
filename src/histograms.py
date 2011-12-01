@@ -42,6 +42,7 @@ def compute_visual_words(descriptors, vocabulary):
 
     returns
     -------
+        ndarray: visual words
 
     """
     desc_count = len(descriptors)
