@@ -73,7 +73,7 @@ def show_results(results, names):
         ax.yaxis.set_visible(False)
 
         ax.imshow(image)
-        ax.set_title(result[1])
+        ax.set_title("%02d" % result[1])
     plt.show()
 
 
