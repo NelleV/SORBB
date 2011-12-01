@@ -1,5 +1,6 @@
 import numpy as np
 from itertools import islice
+from matplotlib import pyplot as plt
 
 from sklearn.metrics.pairwise import euclidean_distances
 
@@ -32,14 +33,48 @@ def search(visual_words, postings, max_im=20):
             first columns containes the index of the images retrieved, the
             second the tfidfs scores
     """
-    results = postings[visual_words].copy()
+    matches = postings[visual_words].copy()
     tf = visual_words.astype(float) / len(visual_words)
-    idf = np.log(postings.shape[1] / results.sum(axis=1))
-    tfidfs = np.dot(tf * idf, results)
+    idf = np.log(postings.shape[1] / matches.sum(axis=1))
+    tfidfs = np.dot(tf * idf, matches)
     order = tfidfs.argsort()
     tfidfs.sort()
-    results = np.concatenate((order, tfidfs), axis=1)
+
+    # FIXME - should probably use np.concatenate
+    results = np.zeros((len(tfidfs), 2))
+    results[:, 0] = order
+    results[:, 1] = tfidfs
     return results[::-1][:max_im]
+
+
+def show_results(results, names):
+    """
+    Show the results in a nice grid.
+
+    Show only 20 top results
+
+    params
+    ------
+        results
+
+        names
+    """
+
+    fig = plt.figure()
+
+    for i, result in enumerate(results):
+        if i > 20:
+            break
+        image_name = names[result[0]]
+        image = load.get_image(image_name)
+
+        ax = fig.add_subplot(5, 4, i)
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+
+        ax.imshow(image)
+        ax.set_title(result[1])
+    plt.show()
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 from vocabulary import compute_vocabulary
 
-NUM_IMAGES = 50
+NUM_IMAGES = 1000
 
 mem = Memory(cachedir='.')
 

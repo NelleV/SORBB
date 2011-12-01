@@ -47,3 +47,33 @@ def load_data(test=False):
             except IOError:
                 continue
         yield im, calc
+
+
+def load_data_names():
+    """
+    Load the names of the data
+
+    returns
+    --------
+        name: string
+    """
+
+    f = open(train_names, 'r')
+    for name in f.readlines():
+        yield name[:-1]
+
+
+def get_image(image_name):
+    """
+    Return the image
+
+    params
+    ------
+        image_name: string, name of the image
+
+    returns
+    -------
+        image: ndarray
+    """
+    image = imread(os.path.join(data_train_path, image_name))[:-1][::-1]
+    return image
