@@ -1,4 +1,4 @@
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 
 def compute_vocabulary(descriptors, k=1000, max_im=None, verbose=False):
@@ -22,7 +22,7 @@ def compute_vocabulary(descriptors, k=1000, max_im=None, verbose=False):
         cluster_centers: ndarray
     """
 
-    km = KMeans(k=250)
+    km = MiniBatchKMeans(k=k, chunk_size=1500, verbose=verbose)
     km.fit(descriptors)
 
     return km.cluster_centers_
