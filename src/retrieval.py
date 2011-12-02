@@ -23,8 +23,10 @@ def search(visual_words, postings, max_im=20):
     params
     ------
         visual_words: ndarray
+            list of visual words contained in the query.
 
-        postings: ndarray
+        postings: ndarray of boolean (n, m)
+            inverted index, of n descriptors and m images.
 
         max_im: int, optional
             number of results to return
@@ -49,7 +51,7 @@ def search(visual_words, postings, max_im=20):
     return results[::-1][:max_im]
 
 
-def show_results(results, names, title = ""):
+def show_results(results, names, title=""):
     """
     Show the results in a nice grid.
 
@@ -57,19 +59,22 @@ def show_results(results, names, title = ""):
 
     params
     ------
-        results
+        results: ndarray (., 2)
+            array containing, in the first column, the id of the result, on
+            the second, the score of that results
 
-        names
+        names: ndarray (.)
+            image database.
     """
     fig = plt.figure(title)
-    
+
     for i, result in enumerate(results):
         if i > 20:
             break
-        image_name = names[int(result[0])]
+        image_name = names[result[0]]
         image = load.get_image(image_name)
 
-        ax = fig.add_subplot(5, 4, i+1)
+        ax = fig.add_subplot(5, 4, i + 1)
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
         if len(image.shape) == 3:
