@@ -21,11 +21,14 @@ def perform_evaluation():
     best_prec = 0.0
     best_results = 0.0
     best_query = None
-    
+    k = 0
     mean_average_precision = 0.0;
     for test_query_index, (im,mask) in enumerate(test_queries):
         interest_points = mem.cache(get_interest_points)(mask)
         descriptor = mem.cache(compute_boundary_desc)(im, mask, interest_points)
+        if len(descriptor) == 0:
+            continue
+        k+=1
         visual_words = histograms.compute_visual_words(descriptor, vocabulary)
         search_results = retrieval.search(visual_words, postings)
 
@@ -38,7 +41,7 @@ def perform_evaluation():
             best_results = search_results
             best_query = test_query_index
 
-    mean_average_precision /= len(test_queries)
+    mean_average_precision /= k
     retrieval.show_results(best_results, test_names, "%s mAP: %.2f" % (test_names[test_query_index], mean_average_precision))
 
 def average_precision(test_query_index, search_results, test_names):

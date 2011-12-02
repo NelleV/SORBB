@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{afe20729-2cee-4e64-8655-09db2d5b4a4f}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>retrieval.py</StartupFile>
+    <StartupFile>evaluate.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,8 +22,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="compute_descriptors.py" />
+    <Compile Include="compute_image_database.py" />
+    <Compile Include="compute_postings.py" />
+    <Compile Include="compute_vocabulary.py" />
+    <Compile Include="evaluate.py" />
     <Compile Include="histograms.py" />
     <Compile Include="retrieval.py" />
+    <Compile Include="retrieval2.py" />
+    <Compile Include="test_search.py" />
     <Compile Include="vocabulary.py" />
     <Compile Include="descriptors.py" />
     <Compile Include="load.py" />
