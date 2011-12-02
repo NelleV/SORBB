@@ -49,7 +49,7 @@ def search(visual_words, postings, max_im=20):
     return results[::-1][:max_im]
 
 
-def show_results(results, names):
+def show_results(results, names, title = ""):
     """
     Show the results in a nice grid.
 
@@ -61,16 +61,15 @@ def show_results(results, names):
 
         names
     """
-
-    fig = plt.figure()
-
+    fig = plt.figure(title)
+    
     for i, result in enumerate(results):
         if i > 20:
             break
-        image_name = names[result[0]]
+        image_name = names[int(result[0])]
         image = load.get_image(image_name)
 
-        ax = fig.add_subplot(5, 4, i)
+        ax = fig.add_subplot(5, 4, i+1)
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
         if len(image.shape) == 3:
@@ -78,6 +77,9 @@ def show_results(results, names):
         else:
             ax.imshow(image, cmap=cm.gray)
         ax.set_title("%02d" % result[1])
+        ax.imshow(image)
+        #ax.set_title("%02d" % result[1])
+        ax.set_title(image_name)
     plt.show()
 
 

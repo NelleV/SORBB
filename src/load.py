@@ -49,7 +49,7 @@ def load_data(test=False):
         yield im, calc
 
 
-def load_data_names():
+def load_data_names(test=False):
     """
     Load the names of the data
 
@@ -58,7 +58,10 @@ def load_data_names():
         name: string
     """
 
-    f = open(train_names, 'r')
+    if test:
+        f = open(test_names, 'r')
+    else:
+        f = open(train_names, 'r')
     for name in f.readlines():
         yield name[:-1]
 
