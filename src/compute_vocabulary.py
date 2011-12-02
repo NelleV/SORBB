@@ -4,11 +4,13 @@ from sklearn.externals.joblib import Memory
 
 from vocabulary import compute_vocabulary
 
-NUM_DESC = 10000
+NUM_DESC = None
 
 mem = Memory(cachedir='.')
-
-descriptors = np.load('./data/descriptors.npy')[:NUM_DESC]
+if NUM_DESC is not None:
+    descriptors = np.load('./data/descriptors.npy')[:NUM_DESC]
+else:
+    descriptors = np.load('./data/descriptors.npy')
 
 print "compute vocabulary"
 vocabulary = compute_vocabulary(descriptors, verbose=True)

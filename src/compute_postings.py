@@ -6,7 +6,7 @@ from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 from histograms import compute_visual_words
 
-NUM_IMAGES = 1000
+NUM_IMAGES = None
 
 mem = Memory(cachedir='.')
 

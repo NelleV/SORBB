@@ -5,7 +5,7 @@ from sklearn.externals.joblib import Memory
 from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 
-NUM_IMAGES = 1000
+NUM_IMAGES = None
 
 mem = Memory(cachedir='.')
 

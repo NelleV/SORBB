@@ -1,7 +1,7 @@
 from sklearn.cluster import MiniBatchKMeans
 
 
-def compute_vocabulary(descriptors, k=1000, max_im=None, verbose=False):
+def compute_vocabulary(descriptors, k=10000, max_im=None, verbose=False):
     """
     Computes the vocabulary for all the training images
 

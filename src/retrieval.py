@@ -1,6 +1,8 @@
 import numpy as np
 from itertools import islice
+
 from matplotlib import pyplot as plt
+from matplotlib import cm
 
 from sklearn.metrics.pairwise import euclidean_distances
 
@@ -34,7 +36,7 @@ def search(visual_words, postings, max_im=20):
             second the tfidfs scores
     """
     matches = postings[visual_words].copy()
-    tf = visual_words.astype(float) / len(visual_words)
+    tf = np.ones((len(visual_words),)).astype(float) / len(visual_words)
     idf = np.log(postings.shape[1] / matches.sum(axis=1))
     tfidfs = np.dot(tf * idf, matches)
     order = tfidfs.argsort()
@@ -71,8 +73,10 @@ def show_results(results, names):
         ax = fig.add_subplot(5, 4, i)
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
-
-        ax.imshow(image)
+        if len(image.shape) == 3:
+            ax.imshow(image)
+        else:
+            ax.imshow(image, cmap=cm.gray)
         ax.set_title("%02d" % result[1])
     plt.show()
 

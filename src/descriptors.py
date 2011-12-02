@@ -89,8 +89,11 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
             mask_patch = mask[point[0] - scale:point[0] + scale,
                               point[1] - scale:point[1] + scale]
             # mask_patch and patch should be of the same patch, but who knows
-            # ? Let's only return them if they are of the same size.
-            if patch.any() and patch.shape == mask_patch.shape:
+            # ? Let's only return them if they are of the same size and of
+            # squared shape !.
+            if patch.any() and \
+               patch.shape == mask_patch.shape and \
+               patch.shape[0] == patch.shape[1]:
                 # If the minimum size of the patch is 1, no way to compute the
                 # HOG. Let's ditch those patch too.
                 if min(patch.shape) < 32 or min(mask_patch.shape) < 32:
@@ -145,6 +148,8 @@ def compute_boundary_desc(image, mask, points):
 
     features = []
     for patch, mask_patch in gen:
+        gpb_patch = patch.copy()
+        gpb_patch[mask_patch.astype(bool)] = 0
         resized_patch = imresize(patch, (32, 32))
 
         # HOG
