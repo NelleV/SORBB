@@ -66,7 +66,7 @@ def show_results(results, names, title=""):
         names: ndarray (.)
             image database.
     """
-    fig = plt.figure(title)
+    fig = plt.figure()
 
     for i, result in enumerate(results):
         if i > 20:

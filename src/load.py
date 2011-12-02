@@ -53,6 +53,11 @@ def load_data_names(test=False):
     """
     Load the names of the data
 
+    params
+    ------
+        test: boolean, default: False, optional
+            when set to true, read the test dataset
+
     returns
     --------
         name: string
