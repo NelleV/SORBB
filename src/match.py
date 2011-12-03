@@ -37,7 +37,8 @@ def score_results(coords, desc, search_results, names, voc, verbose=False):
         desc2, coords2 = compute_boundary_desc(im2,
                                                mask2,
                                                interest_points)
-        search_results[j, 1] += score_(desc, desc2, coords, coords2)
+        if desc2:
+            search_results[j, 1] += score_(desc, desc2, coords, coords2)
     return search_results
 
 

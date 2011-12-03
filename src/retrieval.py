@@ -15,7 +15,7 @@ THRESHOLD = 0.95
 def candidates_by_histograms(im, mask, histogram_database, vocabulary):
     query_histogram = compute_histogram(im, mask, vocabulary)
     dists = euclidean_distances(query_histogram, histogram_database)
-    return islice(dists[0].argsort(), 0, 200)
+    return islice(dists[0].argsort(), 0, 20)
 
 
 def match_descriptors(d1, d2, f1, f2):
@@ -72,6 +72,7 @@ def match_descriptors(d1, d2, f1, f2):
     B0[A0[eps0], np.array(range(A0.shape[0]))[eps0]] = 1
     B0[np.array(range(A1.shape[0]))[eps1], A1[eps1]] += 1
     matches = []
+    # very very very slow
     for i, pos in enumerate(B0):
         for j, element in enumerate(pos):
             if element:
@@ -83,7 +84,7 @@ def match_descriptors(d1, d2, f1, f2):
     return np.array(matches)
 
 
-def search(visual_words, postings, max_im=200):
+def search(visual_words, postings, max_im=20):
     """
     Search for the best matches in the database
 
@@ -120,19 +121,45 @@ def search(visual_words, postings, max_im=200):
 
 def score_(desc1, desc2, coords1, coords2, alpha=0.75, beta=0.25):
     """
-    Scores
+    Scores two images.
+
+    param
+    -----
+        desc1: ndarray
+            descriptors of image1
+
+        desc2: ndarray
+            descriptors of image2
+
+        coords1: ndarray
+            coordinates of image1
+
+        corrds2: ndarray
+            coordinates of image2
+
+        alpha: float, optional, default: 0.75
+            first coef
+
+        beta: float, optional, default: 0/25
+
+    returns
+    -------
+        score: int
+            the final score computed as in [1]_
+
+    references
+    ----------
+    [1] Smooth Object Retrieval using a Bag of Boundaries
     """
     matched_desc = match_descriptors(np.array(desc1), np.array(desc2),
                                      np.array(coords1), np.array(coords2))
-    result = ransac(matched_desc, max_iter=3000, tol=75, d_min=15)
-    score = alpha * len(result)
-    score += beta * len(result) ** 2 / (len(desc1) * len(desc2))
+    result = ransac(matched_desc, max_iter=1000, tol=75, d_min=15)
+    if result:
+        score = alpha * len(result)
+        score += beta * len(result) ** 2 / (len(desc1) * len(desc2))
+    else:
+        score = 0
     return score
-
-
-def match(results, desc, coords, names):
-    """
-    """
 
 
 def show_results(results, names, title=""):
