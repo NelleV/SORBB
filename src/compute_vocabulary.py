@@ -19,4 +19,4 @@ print "compute vocabulary of size %d" % k
 # Compute vocabulary with loose tolerance when testing. The computation is
 # then much faster, and still allows correct testing.
 vocabulary = compute_vocabulary(descriptors, k=k, verbose=True, tol=10e2)
-vocabulary.dump('./data/vocabulary.mat')
+vocabulary.dump('./data/vocabulary.npy')

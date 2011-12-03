@@ -10,7 +10,7 @@ NUM_IMAGES = 100
 
 mem = Memory(cachedir='.')
 
-vocabulary = np.load('./data/vocabulary.mat')
+vocabulary = np.load('./data/vocabulary.npy')
 gen = load_data()
 res = []
 

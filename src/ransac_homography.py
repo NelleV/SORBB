@@ -1,7 +1,5 @@
 import numpy as np
 
-from scipy import linalg
-
 
 def fit_homography(points):
     """
@@ -19,22 +17,12 @@ def fit_homography(points):
     -------
         H, the homography matrix
     """
-    a = []
-    for X in points:
-        x1 = X[1]
-        y1 = X[0]
-        x2 = X[3]
-        y2 = X[2]
-
-        a_x = np.array([-x1, -y1, -1, 0, 0, 0, x2 * x1, x2 * y1, x2])
-        a_y = np.array([0, 0, 0, -x1, -y1, -1, y2 * x1, y2 * y1,
-                        y2])
-        a.append(a_x)
-        a.append(a_y)
-    A = np.array(a)
-    H = linalg.svd(A)[-1].T[:, -1]
-    H.shape = (3, 3)
-    H /= H[2, 2]
+    H = np.zeros((3, 3))
+    A = np.vstack([points[:, 0], np.ones(len(points))]).T
+    H[0, 0], H[0, 2] = np.linalg.lstsq(A, points[:, 2])[0]
+    B = np.vstack([points[:, 1], np.ones(len(points))]).T
+    H[1, 1], H[1, 2] = np.linalg.lstsq(B, points[:, 3])[0]
+    H[2, 2] = 1
     return H
 
 
@@ -69,14 +57,13 @@ def error_homography(H, data):
     Y = X.copy()
     X[:, :2] = data[:, :2]
     Y[:, :2] = data[:, 2:]
-    tX = np.dot(X, H)
+    tX = np.dot(H, X.T).T
     e = np.sqrt((tX - Y) ** 2)
     e = e.sum(axis=1)
-    e /= len(data)
     return e
 
 
-def ransac(data, max_iter=500, tol=100):
+def ransac(data, max_iter=500, tol=100, d_min=5, verbose=False):
     """
     Fits RANSAC
 
@@ -85,25 +72,33 @@ def ransac(data, max_iter=500, tol=100):
         data: ndarray
     """
     bestfit = None
-    besterr = 10000000000000
     best_inliners = None
-    d = 2
-    max_d = 2
+    max_d = d_min
     for it in range(max_iter):
-        fit_data, test_data = random_partition(4, data.shape[0])
+        fit_data, test_data = random_partition(2, data.shape[0])
         fit_data = data[fit_data, :]
         test_data = data[test_data]
         fit_H = fit_homography(fit_data)
         error = error_homography(fit_H, test_data)
         inliners = test_data[error < tol]
         if 1:
-            if len(inliners) > d:
-                print "iteration %d" % it, error.min(), len(inliners), besterr
+            if verbose and len(inliners) > d_min:
+                print "it %d, error min %f, error max %f, inliners %d" % (
+                                                               it,
+                                                               error.min(),
+                                                               error.max(),
+                                                               len(inliners))
 
-        err = np.mean(error) / len(inliners)
         if len(inliners) > max_d:
-            besterr = err
             bestfit = fit_H
             max_d = len(inliners)
-            best_inliners = np.concatenate((fit_data, inliners))
+            best_inliners = inliners.copy()
+
     return best_inliners, bestfit
+
+if __name__ == "__main__":
+    H = np.array([[2, 0, 4], [0, 2, 5], [0, 0, 1]])
+    A = np.array([[1, 1, 1], [3, 2, 1], [4, 5, 1], [2, 4, 1], [6, 8, 1]])
+    r = np.dot(H, A.T)
+    a = np.concatenate((A[:, :2], r.T[:, :2]), axis=1)
+    b = fit_homography(a)

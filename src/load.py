@@ -81,7 +81,18 @@ def get_image(image_name):
 
     returns
     -------
-        image: ndarray
+        image, calc: (ndarray, ndarray)
+            returns a tuple of images, one being a sculpture, the other a mask
+            Returns None, None if the mask doesn't exist
     """
     image = imread(os.path.join(data_train_path, image_name))[:-1][::-1]
-    return image
+    try:
+        calc = imread(os.path.join(
+                            masks_train_path,
+                            image_name[:-3] + 'png'))
+    except IOError:
+        print "IOError %s" % os.path.join(masks_train_path,
+                                          image_name[:-3] + 'png')
+        return None, None
+
+    return image, calc
