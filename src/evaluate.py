@@ -30,7 +30,7 @@ def perform_evaluation(max_im=None, verbose=False):
             break
 
         interest_points = get_interest_points(mask)
-        descriptor = compute_boundary_desc(im, mask, interest_points)
+        descriptor, _ = compute_boundary_desc(im, mask, interest_points)
         if len(descriptor) == 0:
             continue
 

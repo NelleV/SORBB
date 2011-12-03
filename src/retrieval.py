@@ -16,7 +16,7 @@ def candidates_by_histograms(im, mask, histogram_database, vocabulary):
     return islice(dists[0].argsort(), 0, 200)
 
 
-def search(visual_words, postings, max_im=20):
+def search(visual_words, postings, max_im=200):
     """
     Search for the best matches in the database
 
@@ -28,7 +28,7 @@ def search(visual_words, postings, max_im=20):
         postings: ndarray of boolean (n, m)
             inverted index, of n descriptors and m images.
 
-        max_im: int, optional
+        max_im: int, optional, default: 20
             number of results to return
 
     returns
@@ -49,6 +49,13 @@ def search(visual_words, postings, max_im=20):
     results[:, 0] = order
     results[:, 1] = tfidfs
     return results[::-1][:max_im]
+
+
+def scoring():
+    """
+    Scores
+    """
+    pass
 
 
 def show_results(results, names, title=""):

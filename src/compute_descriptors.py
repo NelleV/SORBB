@@ -5,7 +5,7 @@ from sklearn.externals.joblib import Memory
 from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 
-NUM_IMAGES = None
+NUM_IMAGES = 100
 
 mem = Memory(cachedir='.')
 
@@ -18,7 +18,9 @@ for i, (im, mask) in enumerate(gen):
     if NUM_IMAGES is not None and i == NUM_IMAGES:
         break
     interest_points = mem.cache(get_interest_points)(mask)
-    descriptor = mem.cache(compute_boundary_desc)(im, mask, interest_points)
+    descriptor, coords = mem.cache(compute_boundary_desc)(im,
+                                                          mask,
+                                                          interest_points)
     for element in descriptor:
         descriptors.append(element)
 

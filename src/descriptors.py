@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 from skimage.feature.hog import hog
 
 
-def get_interest_points(calc, min_dist=40):
+def get_interest_points(calc, min_dist=15):
     """
     Returns the coordinates of interest points computed on a mask
 
@@ -13,7 +13,7 @@ def get_interest_points(calc, min_dist=40):
     ------
         ndarray of booleans
 
-        min_dist: int, optional
+        min_dist: int, optional, default: 15
             minimum distance between the points of interest.
 
     returns
@@ -73,7 +73,8 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
 
     returns
     --------
-        patch, mask_patch: tuple of ndarray
+        patch, mask_patch, point: tuple of ndarray
+            patch, mask patch and coordinates
     """
     if len(image.shape) == 3:
         im = image.mean(axis=2)
@@ -98,7 +99,7 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
                 # HOG. Let's ditch those patch too.
                 if min(patch.shape) < 32 or min(mask_patch.shape) < 32:
                     continue
-                yield patch, mask_patch
+                yield patch, mask_patch, [point[0], point[1]]
 
 
 def occupancy_grid(patch):
@@ -141,13 +142,14 @@ def compute_boundary_desc(image, mask, points):
 
     returns
     -------
-       features: list of arrays
+       features, coords: (list of arrays, list of coordinates)
     """
 
     gen = get_patch(image, mask, points)
 
     features = []
-    for patch, mask_patch in gen:
+    coords = []
+    for patch, mask_patch, coord in gen:
         gpb_patch = patch.copy()
         gpb_patch[mask_patch.astype(bool)] = 0
         resized_patch = imresize(patch, (32, 32))
@@ -168,8 +170,9 @@ def compute_boundary_desc(image, mask, points):
                                  axis=0)
 
         features.append(feature)
+        coords.append(coord)
 
-    return features
+    return features, coords
 
 
 if __name__ == "__main__":
@@ -186,4 +189,4 @@ if __name__ == "__main__":
     im, mask = gen.next()
     points = mem.cache(get_interest_points)(mask, min_dist=15)
 
-    features = compute_boundary_desc(im, mask, points)
+    features, coords = compute_boundary_desc(im, mask, points)

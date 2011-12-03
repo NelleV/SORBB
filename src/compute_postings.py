@@ -6,7 +6,7 @@ from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 from histograms import compute_visual_words
 
-NUM_IMAGES = None
+NUM_IMAGES = 100
 
 mem = Memory(cachedir='.')
 
@@ -24,10 +24,10 @@ for i, (im, mask) in enumerate(gen):
         break
 
     interest_points = mem.cache(get_interest_points)(mask)
-    descriptor = mem.cache(compute_boundary_desc)(im,
+    descriptor, coords = mem.cache(compute_boundary_desc)(im,
                                                   mask,
                                                   interest_points)
     vw = compute_visual_words(descriptor, vocabulary)
     if vw is not None:
         postings[vw, i] = True
-postings.dump('./data/postings.mat')
+postings.dump('./data/postings.npy')
