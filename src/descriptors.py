@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 from skimage.feature.hog import hog
 
 
-def get_interest_points(calc, min_dist=15):
+def get_interest_points(calc, min_dist=20):
     """
     Returns the coordinates of interest points computed on a mask
 
@@ -40,7 +40,7 @@ def get_interest_points(calc, min_dist=15):
                    euclidean_distances(point,
                                        interest_points).min() > min_dist:
                     interest_points.append([i, j])
-
+    print 'found %d interest points' % len(interest_points)
     return np.array(interest_points)
 
 

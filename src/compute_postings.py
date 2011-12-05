@@ -6,7 +6,7 @@ from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 from histograms import compute_visual_words
 
-NUM_IMAGES = 100
+NUM_IMAGES = 300
 
 mem = Memory(cachedir='.')
 
@@ -29,5 +29,7 @@ for i, (im, mask) in enumerate(gen):
                                                   interest_points)
     vw = compute_visual_words(descriptor, vocabulary)
     if vw is not None:
-        postings[vw, i] = True
+        hist, val = np.histogram(vw, bins=len(vocabulary))
+        postings[:, i] = hist
+
 postings.dump('./data/postings.npy')

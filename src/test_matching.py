@@ -46,7 +46,7 @@ voc2 = vocabulary[compute_visual_words(desc2, vocabulary)]
 
 # Use, as for a sift matching a nearest neighbour /  second nearest neighbour
 # matching.
-A, _ = match_descriptors(np.array(desc1), np.array(desc2),
+A = match_descriptors(np.array(desc1), np.array(desc2),
                          np.array(coords1), np.array(coords2))
 show_matched_desc(im1, im2, np.array(A))
 print "found descriptors %d" % len(A)

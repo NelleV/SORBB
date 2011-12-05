@@ -39,7 +39,8 @@ def score_results(coords, desc, search_results, names, voc, verbose=False):
                                                interest_points)
         if desc2:
             search_results[j, 1] += score_(desc, desc2, coords, coords2)
-    return search_results
+    idxs = search_results[:, 1].argsort()[::-1]
+    return search_results[idxs, :]
 
 
 def sort(search_results):

@@ -16,7 +16,7 @@ gen = load_data()
 im, mask = gen.next()
 
 interest_points = mem.cache(get_interest_points)(mask)
-descriptors = mem.cache(compute_boundary_desc)(im, mask, interest_points)
+descriptors, _ = mem.cache(compute_boundary_desc)(im, mask, interest_points)
 vw = compute_visual_words(descriptors, vocabulary)
 
 results = search(vw, postings)

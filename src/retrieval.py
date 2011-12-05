@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg.linalg import norm
 from itertools import islice
 
 from matplotlib import pyplot as plt
@@ -105,10 +106,15 @@ def search(visual_words, postings, max_im=20):
             first columns containes the index of the images retrieved, the
             second the tfidfs scores
     """
-    matches = postings[visual_words].copy()
+    matches = (postings / postings.sum(axis=0))[visual_words]
+    # If we didn't compute the database on all the images, there will be nan.
+    # We want 0s instead.
+    matches[np.isnan(matches)] = 0
     tf = np.ones((len(visual_words),)).astype(float) / len(visual_words)
     idf = np.log(postings.shape[1] / matches.sum(axis=1))
-    tfidfs = np.dot(tf * idf, matches)
+    query = np.ones(len(visual_words)).astype(float) * idf
+    tfidfs = np.dot(tf * idf, matches * idf.reshape(len(idf), 1))
+    tfidfs /= (norm(tf * idf) * norm(matches * idf.reshape(len(idf), 1)))
     order = tfidfs.argsort()
     tfidfs.sort()
 
@@ -182,8 +188,8 @@ def show_results(results, names, title=""):
     for i, result in enumerate(results):
         if i > 20:
             break
-        image_name = names[result[0]]
-        image = load.get_image(image_name)
+        image_name = names[result[0], 0]
+        image, _ = load.get_image(image_name)
 
         ax = fig.add_subplot(5, 4, i + 1)
         ax.xaxis.set_visible(False)
