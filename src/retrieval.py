@@ -85,7 +85,22 @@ def match_descriptors(d1, d2, f1, f2):
     return np.array(matches)
 
 
-def search(visual_words, postings, max_im=20):
+def search(visual_words, postings, max_im=100):
+    matches = postings[visual_words].copy().astype(bool)
+    tf = np.ones((len(visual_words),)).astype(float) / len(visual_words)
+    idf = np.log(postings.shape[1] / matches.sum(axis=1))
+    tfidfs = np.dot(tf * idf, matches)
+    order = tfidfs.argsort()
+    tfidfs.sort()
+
+    # FIXME - should probably use np.concatenate
+    results = np.zeros((len(tfidfs), 2))
+    results[:, 0] = order
+    results[:, 1] = tfidfs
+    return results[::-1][:max_im]
+
+
+def search2(visual_words, postings, max_im=100):
     """
     Search for the best matches in the database
 
@@ -106,13 +121,18 @@ def search(visual_words, postings, max_im=20):
             first columns containes the index of the images retrieved, the
             second the tfidfs scores
     """
+    # matches corresponds to the tf of the database, for the desired visual
+    # words
     matches = (postings / postings.sum(axis=0))[visual_words]
     # If we didn't compute the database on all the images, there will be nan.
     # We want 0s instead.
     matches[np.isnan(matches)] = 0
+
+    # tf corresponds to the tf values of the query.
     tf = np.ones((len(visual_words),)).astype(float) / len(visual_words)
+
+    # idf value is the same on the query and the search
     idf = np.log(postings.shape[1] / matches.sum(axis=1))
-    query = np.ones(len(visual_words)).astype(float) * idf
     tfidfs = np.dot(tf * idf, matches * idf.reshape(len(idf), 1))
     tfidfs /= (norm(tf * idf) * norm(matches * idf.reshape(len(idf), 1)))
     order = tfidfs.argsort()

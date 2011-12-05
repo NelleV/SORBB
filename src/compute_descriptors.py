@@ -5,17 +5,15 @@ from sklearn.externals.joblib import Memory
 from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 
-NUM_IMAGES = 500
+NUM_IMAGES = 300
 
 mem = Memory(cachedir='.')
 
-gen = load_data()
+gen = load_data(test=True)
 descriptors = []
 print "Compute descriptors"
 d = 0
 for i, (im, mask) in enumerate(gen):
-    if i < 200:
-        continue
     if i % 10 == 0:
         print "Computed %d images" % i
     if NUM_IMAGES is not None and i == NUM_IMAGES:

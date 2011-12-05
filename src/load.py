@@ -30,8 +30,8 @@ def load_data(test=False):
     else:
         f = open(train_names, 'r')
     for sculpture in f.readlines():
-        im = imread(os.path.join(data_train_path, sculpture)[:-1])[::-1]
         if test:
+            im = imread(os.path.join(data_test_path, sculpture)[:-1])[::-1]
             try:
                 calc = imread(os.path.join(
                                     masks_test_path,
@@ -40,6 +40,7 @@ def load_data(test=False):
                 # If the mask is not here, skip this image
                 continue
         else:
+            im = imread(os.path.join(data_train_path, sculpture)[:-1])[::-1]
             try:
                 calc = imread(os.path.join(
                                         masks_train_path,
@@ -71,7 +72,7 @@ def load_data_names(test=False):
         yield name[:-1]
 
 
-def get_image(image_name):
+def get_image(image_name, test=False):
     """
     Return the image
 
@@ -85,9 +86,18 @@ def get_image(image_name):
             returns a tuple of images, one being a sculpture, the other a mask
             Returns None, None if the mask doesn't exist
     """
-    image = imread(os.path.join(data_train_path, image_name))[:-1][::-1]
+    if test:
+        image = imread(os.path.join(data_test_path, image_name))[:-1][::-1]
+    else:
+        image = imread(os.path.join(data_train_path, image_name))[:-1][::-1]
     try:
-        calc = imread(os.path.join(
+        if test:
+            calc = imread(os.path.join(
+                            masks_test_path,
+                            image_name[:-3] + 'png'))
+
+        else:
+            calc = imread(os.path.join(
                             masks_train_path,
                             image_name[:-3] + 'png'))
     except IOError:
@@ -96,3 +106,31 @@ def get_image(image_name):
         return None, None
 
     return image, calc
+
+
+def read_gt():
+    """
+    Read ground truth file
+
+    returns:
+        array of dict.
+        The dict contains as key the query image, and an array of [truth,
+        ignore] as value
+    """
+    # FIXME - not the best interface
+    filename = open('./data/sculptures6k_evaluation/sculptures6k_gt.txt', 'r')
+    queries = []
+    for i, line in enumerate(filename.readlines()):
+        if i == 0:
+            continue
+        if i % 4 == 3:
+            truth = line.split(' ')
+        elif i % 4 == 2:
+            continue
+        elif i % 4 == 1:
+            query = line[:-1]
+        elif i % 4 == 0:
+            ignore = line.split(' ')
+            queries.append({query: [truth, ignore]})
+
+    return queries
