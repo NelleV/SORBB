@@ -3,3 +3,11 @@
 *.pyc
 *.mat
 *.npy
+*.pdf
+*.out
+*.log
+*.npy
+*.toc
+*.snm
+*.nav
+*.tgz
