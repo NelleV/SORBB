@@ -10,6 +10,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 import load
 from histograms import compute_histogram_database, compute_histogram
 from ransac_homography import ransac
+
 THRESHOLD = 0.95
 
 
@@ -206,7 +207,7 @@ def show_results(results, names, title=""):
     fig = plt.figure()
 
     for i, result in enumerate(results):
-        if i > 20:
+        if i == 20:
             break
         image_name = names[result[0], 0]
         image, _ = load.get_image(image_name)
