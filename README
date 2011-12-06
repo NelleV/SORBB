@@ -1,4 +1,3 @@
-
 Expects to find the dataset in src/data/sculptures6k
 Expects to find the gPb masks in src/data/masks
 
@@ -7,8 +6,11 @@ How to run the code
 
 1. Compute the image_database by running ``compute_image_database.py``
 
-2. Compute the vocabulary by running ``compute_vocabulary.py``
+2. Compute the descriptors by running ``compute_descriptors.py``
 
-3. Compute the posting files by running ``compute_postings.py``
+3. Compute the vocabulary by running ``compute_vocabulary.py``
+
+4. Compute the posting files by running ``compute_postings.py``
 
 And do you search !
+A test file ``test_evaluate`` is provided, with a basic pipeline.
