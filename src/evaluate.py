@@ -7,6 +7,11 @@ from descriptors import compute_boundary_desc, get_interest_points
 
 
 def perform_evaluation(max_im=None, verbose=False):
+    """
+    Performs evaluation
+    
+    FIXME: should only compute the mean precision, and not the whole pipeline
+    """
     vocabulary = np.load('./data/vocabulary.mat')
     #tf_idf_table = np.load('./data/tf_idf_table.mat')
     #ifreq = np.load('./data/ifreq.mat')
@@ -61,6 +66,11 @@ def perform_evaluation(max_im=None, verbose=False):
 
 
 def average_precision(test_query_index, search_results, test_names):
+    """
+    Computes average precision.
+    
+    FIXME: use arrays and not for loops as in test_evaluate.py
+    """
     sum_prec = 0.0
     correct = 0
 
@@ -76,6 +86,24 @@ def average_precision(test_query_index, search_results, test_names):
 
 
 def label(test_names, index):
+    """
+    Get the label of the name
+    
+    params
+    ------
+        test_names: ndarray (n, 1)
+            numpy array contained the name of the images used
+            
+        index: integer
+            index of the image we are looking for
+            
+    returns
+    -------
+        label deduced from the file name.
+        Careful! About 20% of the labels computed this way are false.
+        This need to be crossed-referenced with the ground truth file,
+        provided with the dataset.
+    """
     file_name = test_names[index]
     return "_".join(file_name.split("_")[:-1])
 
