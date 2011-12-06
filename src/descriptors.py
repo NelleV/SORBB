@@ -112,19 +112,17 @@ def occupancy_grid(patch):
 
     returns
     --------
-        feature: list of 4 elements
+        feature: list of 16 elements
 
     references
     ----------
     [1]_ Smooth Object Retrieval using a Bag of Boundaries
     """
     feature = []
-    w, h = patch.shape[0] / 2, patch.shape[1] / 2
-    feature.append(patch[:w, :h].sum() / (h * w))
-    feature.append(patch[:w, h:].sum() / (h * w))
-    feature.append(patch[w:, :h].sum() / (h * w))
-    feature.append(patch[:w, h:].sum() / (h * w))
-
+    w, h = patch.shape[0] / 4, patch.shape[1] / 4
+    for i in range(4):
+        for j in range(4):
+            feature.append(patch[i * w:(i + 1) * w, j * h:(j + 1) * h].sum() / (h * w))
     return feature
 
 
