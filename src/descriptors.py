@@ -151,7 +151,6 @@ def compute_boundary_desc(image, mask, points):
         gpb_patch = patch.copy()
         gpb_patch[mask_patch.astype(bool)] = 0
         resized_patch = imresize(patch, (32, 32))
-        import pdb; pdb.set_trace()
 
         # HOG
         patch_hog = hog(resized_patch)
