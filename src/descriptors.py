@@ -99,7 +99,7 @@ def get_patch(image, mask, points, scales=[1, 4, 16]):
                 # HOG. Let's ditch those patch too.
                 if min(patch.shape) < 32 or min(mask_patch.shape) < 32:
                     continue
-                yield patch, mask_patch, [point[0], point[1]]
+                yield patch, ((mask_patch).astype(bool) ==  False), [point[0], point[1]]
 
 
 def occupancy_grid(patch):
@@ -151,6 +151,7 @@ def compute_boundary_desc(image, mask, points):
         gpb_patch = patch.copy()
         gpb_patch[mask_patch.astype(bool)] = 0
         resized_patch = imresize(patch, (32, 32))
+        import pdb; pdb.set_trace()
 
         # HOG
         patch_hog = hog(resized_patch)
@@ -177,13 +178,9 @@ if __name__ == "__main__":
     import load
 
     from sklearn.externals.joblib import Memory
-    mem = Memory(cachedir='.')
+    mem = Memory(cachedir='/tmp')
 
     gen = load.load_data()
-    for i in range(4):
-        print i
-        im, mask = gen.next()
-
     im, mask = gen.next()
     points = mem.cache(get_interest_points)(mask, min_dist=15)
 
