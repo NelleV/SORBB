@@ -87,7 +87,7 @@ def match_descriptors(d1, d2, f1, f2):
 
 
 def search(visual_words, postings, max_im=100):
-    matches = postings[visual_words].copy().astype(bool)
+    matches = postings[visual_words].astype(bool)
     tf = np.ones((len(visual_words),)).astype(float) / len(visual_words)
     idf = np.log(postings.shape[1] / matches.sum(axis=1))
     tfidfs = np.dot(tf * idf, matches)
@@ -122,6 +122,7 @@ def search2(visual_words, postings, max_im=100):
             first columns containes the index of the images retrieved, the
             second the tfidfs scores
     """
+    num_words = len(visual_words)
     # matches corresponds to the tf of the database, for the desired visual
     # words
     matches = (postings / postings.sum(axis=0))[visual_words]
@@ -130,12 +131,19 @@ def search2(visual_words, postings, max_im=100):
     matches[np.isnan(matches)] = 0
 
     # tf corresponds to the tf values of the query.
-    tf = np.ones((len(visual_words),)).astype(float) / len(visual_words)
+    tf = np.ones((num_words,)).astype(float) / num_words
 
     # idf value is the same on the query and the search
-    idf = np.log(postings.shape[1] / matches.sum(axis=1))
-    tfidfs = np.dot(tf * idf, matches * idf.reshape(len(idf), 1))
-    tfidfs /= (norm(tf * idf) * norm(matches * idf.reshape(len(idf), 1)))
+    idf = np.log(postings.shape[1] / matches.astype(bool).sum(axis=1))
+    query_tfidfs = tf * idf
+    db_tfidfs = matches * idf.reshape(len(idf), 1)
+
+    # Do the cosine similarity
+    tfidfs = np.dot(query_tfidfs, db_tfidfs)
+    tfidfs /= np.sqrt(query_tfidfs ** 2).sum(axis=0) * \
+              np.sqrt(db_tfidfs ** 2).sum(axis=0)
+    tfidfs[np.isnan(tfidfs)] = 0
+
     order = tfidfs.argsort()
     tfidfs.sort()
 
@@ -189,7 +197,7 @@ def score_(desc1, desc2, coords1, coords2, alpha=0.75, beta=0.25):
     return score
 
 
-def show_results(results, names, title=""):
+def show_results(results, names, title="", file_name="image.png"):
     """
     Show the results in a nice grid.
 
@@ -223,8 +231,7 @@ def show_results(results, names, title=""):
         ax.imshow(image)
         #ax.set_title("%02d" % result[1])
         ax.set_title(image_name)
-    plt.show()
-
+    fig.savefig(file_name)
 
 if __name__ == "__main__":
     from sklearn.externals.joblib import Memory

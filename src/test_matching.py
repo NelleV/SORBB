@@ -12,8 +12,8 @@ from draw import show_matched_desc
 mem = Memory(cachedir='.')
 # FIXME Choose a couple of images, and load them properly
 vocabulary = np.load('./data/vocabulary.npy')
-im1, mask1 = get_image('Henry_Moore_Cut_0006.jpg', test=True)
-im2, mask2 = get_image('Henry_Moore_Cut_0034.jpg', test=True)
+im1, mask1 = get_image('Henry_Moore_Hill_Arches_0039.jpg', test=True)
+im2, mask2 = get_image('Henry_Moore_Hill_Arches_0040.jpg', test=True)
 
 interest_points = mem.cache(get_interest_points)(mask1)
 desc1, coords1 = mem.cache(compute_boundary_desc)(im1,
@@ -33,6 +33,6 @@ A = match_descriptors(np.array(desc1), np.array(desc2),
                          np.array(coords1), np.array(coords2))
 show_matched_desc(im1, im2, np.array(A))
 print "found descriptors %d" % len(A)
-el = ransac(np.array(A), max_iter=1000, tol=75, d_min=15)
+el = ransac(np.array(A), max_iter=2000, tol=75, d_min=15)
 show_matched_desc(im1, im2, np.array(el[0]))
 print "found descriptors %d" % len(el[0])

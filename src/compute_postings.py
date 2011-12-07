@@ -6,11 +6,11 @@ from load import load_data
 from descriptors import compute_boundary_desc, get_interest_points
 from histograms import compute_visual_words
 
-NUM_IMAGES = None
+NUM_IMAGES = None 
 
 mem = Memory(cachedir='.')
 
-vocabulary = np.load('./data/vocabulary.npy')
+vocabulary = np.load('/home/nelle/vision/vocabulary_5000.npy')
 gen = load_data()
 res = []
 
@@ -31,5 +31,5 @@ for i, (im, mask) in enumerate(gen):
     if vw is not None:
         hist, val = np.histogram(vw, bins=np.arange(len(vocabulary) + 1))
         postings[:, i] = hist
-
-postings.dump('./data/postings.npy')
+    if i % 1000 == 0:
+        postings.dump('./data/postings.npy')
