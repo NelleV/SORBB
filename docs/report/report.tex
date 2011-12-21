@@ -61,7 +61,25 @@ scale. A descriptor is composed of a HoG and a occupancy grid}
 and color, but also lighting, scale and small viewpoints changes. It needs to
 be local, in order to be robust to partial occlusions. \\
 The boundary descriptors are formed of two descriptors: a Histogram of
-Gradients (HoG) and a foreground mask occupancy grid.
+Gradients (HoG) and a foreground mask occupancy grid. The first part is a
+4 x 4 HoG cells, containing each 8 x 8 pixels, then L2 normalized. The second
+part is 4 x 4 occupancy grid, representing the ratio of foreground pixels in
+each cell. It is then L1 normalized, and each element is squared root. The two
+descriptors are then concatenated, yielding a 340 element descriptor. \\
+Each descriptors is computed at three different scales, 1, 4, and 16 times
+1/10 of the background at interest points. This are computed  on the sampled
+edge, in the manner of \cite{BelongieMP02}, using a minimal distance between
+each interest points of 25 pixels.
+
+\section{Retrieval procedure}
+Traditional object retrieval procedure represents an image with a bag of
+visual words, based on SIFT descriptors. Here, we will use a Bag of Boundary
+(BoB) representation developed in \cite{Arandjelovic11}. Descriptors are
+rendered indexable by quantizing them. The standard method is to use the
+Lloyd's k-means. Unfortunately, that forces one to load all the descriptors in
+ram. Fortunately, \cite{fast-k-means} proposes an online version of the
+algorithm.
+
 \section{Results}
 \section{Conclusion}
 
