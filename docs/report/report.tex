@@ -43,6 +43,25 @@ pertinent to test shape and boundaries descriptors.
 
 \section{Segmentation}
 \section{Boundary descriptors}
+
+\begin{figure}
+
+\label{boundary-descriptors}
+\begin{center}
+\includegraphics[width=350px]{images/desc.png}
+\end{center}
+\caption{Boundary descriptors are extracted on a sampled edge, at different
+scale. A descriptor is composed of a HoG and a occupancy grid}
+\end{figure}
+
+% \caption{The foreground occupancy mask is a grid, where the value of each
+% cell represents the ration of foreground pixels.}
+
+\cite{Arandjelovic11} presents a new shape descriptors, invariant to texture
+and color, but also lighting, scale and small viewpoints changes. It needs to
+be local, in order to be robust to partial occlusions. \\
+The boundary descriptors are formed of two descriptors: a Histogram of
+Gradients (HoG) and a foreground mask occupancy grid.
 \section{Results}
 \section{Conclusion}
 
