@@ -17,7 +17,7 @@
 
 \pagenumbering{arabic}
 \date{\today}
-\title{Smooth object retrieval}
+\title{Smooth object retrieval using Bag of Boundaries}
 \author{Vadim Kantorov \& Nelle Varoquaux}
 \begin{document}
 \maketitle
@@ -26,6 +26,23 @@
 \end{abstract}
 
 \section{Introduction}
+Object recognition is one of the many very active field of vision. Extracting
+viewpoints and lightning invariant descriptors is now done efficiently,
+allowing performant commercial applications. \\
+
+However, current methods fail on two type of objects: smooth objects and wiry
+objects. We will focus on the smooth objects, using methods
+\cite{Arandjelovic11} introduces: boundary descriptors. These new descriptors
+focus on describing the form of the objects, allowing to retrieve objects
+of same shape, but of different sizes and materials. \\
+
+We will use the sculptures 6K dataset: it contains $6000$ pictures of
+sculptures, mostly the work of Moore and Rodin, with groundtruth for twenty
+of this sculptures. Most sculptures appear several times in the dataset, taken
+from different points of views. As Henry Moore often made sculptures of the
+same form in different materials, such as bronze and marble, this dataset is
+pertinent to test shape and boundaries descriptors.
+
 \section{Segmentation}
 \section{Boundary descriptors}
 \section{Results}
