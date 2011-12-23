@@ -26,7 +26,16 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-
+\textit{Image retrieval systems have been one of the very active research
+field of vision. Yet, standard methods fail to perform on wiry objects and
+smooth objects. We will review here the method presented in
+\cite{Arandjelovic11}.\\
+It introduces a new boundary descriptors, representing a 3D object's shape,
+tolerant to lighting changes, scale changes and small viewpoints changes. In
+order to extract these descriptors on a image, a gPb segmentation of the images
+is first computed as described in \cite{gpb}.\\
+Finally, we will show the performance of this new technique using the
+sculpture 6k dataset, and the groundtruth provided for $70$ queries.}
 \end{abstract}
 
 \section{Introduction}
@@ -114,9 +123,17 @@ To test the smooth object retrieval pipeline, 10 sculptures of Henry Moore are
 chosen, with seven images for these sculptures. This sums up to 70 queries. \\
 For each of these queries, a groundtruth is provided, listing the names of the
 \textit{positives} and of \textit{ignores}. The list of \textit{ignores} is
-composed of pictures in which less of 25\% of the sculpture is visible.
+composed of pictures in which less of $25$\% of the sculpture is visible. The
+\textit{positives} list for a query only contains the sculpture that match
+both the shape (and not the texture) and the view points. That explains why
+the groundtruth varies from a query sculpture to another. \\
+The retrieval process is then evaluated using the average mean precision (mAP)
+over the 70 queries. The \textit{ignores} are neither counted as positives nor
+negatives.
 
+% Add results
 \section{Conclusion}
+
 
 \bibliography{biblio.bib}
 
