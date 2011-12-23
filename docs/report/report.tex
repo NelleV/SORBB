@@ -64,7 +64,7 @@ are classified as foreground and background. Below we present the
 details and classification results.
 \begin{enumerate}
 \item \textbf{Data set. }We use a random subset of 300 images drawn from
-the Sculptures 6K data set. The ground truth data for regions (is
+the Sculptures 6K train set. The ground truth data for regions (is
 a region background or foreground) is extracted from the masks provided
 with Sculptures 6K. The train/test separation is half-half (more fine-grained
 statistics is found in Table 1).
@@ -84,19 +84,22 @@ to {[}???{]} with minor deviations:
 \item histogram of dense SIFT descriptors (with a 1000 words dictionary)
 \end{enumerate}
 
-This makes up a vector of 2608 elements to describe a region. The
-classification results are presented in the Table 2.
+This makes up a vector of 2608 elements to describe a region. Quantization
+is done using parameters similar to Assignment 2. We use SVM with
+different kernels to solve the classification problem. The classification
+results are presented in the Table 2. The performance is not stunning
+which might be calling for better vocabulary building (larger dictionary
+size, using more descriptors from an image).
 
+\end{enumerate}
 \begin{table}
-
-
 \caption{Super-pixel data set statistics}
 
 
 \centering{}%
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- & Images & Foreground regions & Background regions & Total\tabularnewline
+ & Images & Foreground regions & Background regions & Total (regions)\tabularnewline
 \hline 
 \hline 
 Train & 150 & 41.66\% & 58.34\% & 9421\tabularnewline
@@ -105,7 +108,42 @@ Test & 150 & 38.24\% & 61.76\% & 8863\tabularnewline
 \hline 
 \end{tabular}
 \end{table}
-\end{enumerate}
+
+
+\begin{table}
+\begin{centering}
+\caption{Classification results}
+\begin{tabular}{|c|c|c|}
+\hline 
+ & Linear kernel & RBF\tabularnewline
+\hline 
+\hline 
+Train & 83.82\% & 87.09\%\tabularnewline
+\hline 
+Test & 63.52\% & 64.06\%\tabularnewline
+\hline 
+\end{tabular}
+\par\end{centering}
+
+\end{table}
+
+
+\begin{figure}
+
+
+\caption{Segmentation examples}
+
+
+\begin{centering}
+\includegraphics[height=3cm]{images/Henry_Moore_Goslar_Warrior_0072}\includegraphics[height=3cm]{images/Henry_Moore_Goslar_Warrior_0072_gpb}\includegraphics[height=3cm]{images/Henry_Moore_Goslar_Warrior_0072_MASK}
+\par\end{centering}
+
+\begin{centering}
+\includegraphics[height=3cm]{images/Rodin_Burghers_of_Calais_0097}\includegraphics[height=3cm]{images/Rodin_Burghers_of_Calais_0097_gpb}\includegraphics[height=3cm]{images/Rodin_Burghers_of_Calais_0097_MASK}
+\par\end{centering}
+
+\centering{}\includegraphics[height=3cm]{images/Rodin_Burghers_of_Calais_0235}\includegraphics[height=3cm]{images/Rodin_Burghers_of_Calais_0235_gpb}\includegraphics[height=3cm]{images/Rodin_Burghers_of_Calais_0235_MASK}
+\end{figure}
 
 
 
