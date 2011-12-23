@@ -72,13 +72,29 @@ edge, in the manner of \cite{BelongieMP02}, using a minimal distance between
 each interest points of 25 pixels.
 
 \section{Retrieval procedure}
+
 Traditional object retrieval procedure represents an image with a bag of
 visual words, based on SIFT descriptors. Here, we will use a Bag of Boundary
 (BoB) representation developed in \cite{Arandjelovic11}. Descriptors are
 rendered indexable by quantizing them. The standard method is to use the
 Lloyd's k-means. Unfortunately, that forces one to load all the descriptors in
-ram. Fortunately, \cite{fast-k-means} proposes an online version of the
-algorithm.
+ram. Extracting the descriptors on the training set yields around 800k
+descriptors. \cite{fast-k-means} proposes a much faster, online version of
+the k-means, enabling us to compute efficiently the vocabulary on the whole
+index. \\
+Once the vocabulary is build, the inverse index can be easily build, and fits
+in ram, enabling fast retrieval from the database. Results are ranked using
+tf-idf. To ensure consistency of the results, a spatial verification is done,
+using a very loose affine transformation, implemented using RANSAC (figure
+\ref{ransac}).
+
+\begin{figure}
+\label{ransac}
+\begin{center}
+\includegraphics[width=350px]{images/matching_01.png}
+\end{center}
+\caption{A very loose affine transformation is fitted, using RANSAC}
+\end{figure}
 
 \section{Results}
 \section{Conclusion}
