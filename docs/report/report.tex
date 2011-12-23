@@ -55,6 +55,60 @@ same form in different materials, such as bronze and marble, this dataset is
 pertinent to test shape and boundaries descriptors.
 
 \section{Segmentation}
+
+The purpose of the segmentation stage is to find the sculpture region
+on an image. Our approach is similar to the one described in {[}???{]}.
+The high-level steps are: first, segmentation into super-pixels using
+a general-purpose segmentation engine; second, the segmented regions
+are classified as foreground and background. Below we present the
+details and classification results.
+\begin{enumerate}
+\item \textbf{Data set. }We use a random subset of 300 images drawn from
+the Sculptures 6K data set. The ground truth data for regions (is
+a region background or foreground) is extracted from the masks provided
+with Sculptures 6K. The train/test separation is half-half (more fine-grained
+statistics is found in Table 1).
+\item \textbf{Segmentation. }We use the state-of-the-art gPb segmentor from
+{[}???{]}. The probability threshold of 0.1 yields about 70-150 regions
+per image. It's worth noting that we have to downsample the input
+images in order to be able to run gPb. Even then it takes up to 2
+minutes to segment a single image.
+\item \textbf{Classification. }We construct the feature vector similarly
+to {[}???{]} with minor deviations:
+
+\begin{enumerate}
+\item mean gradient magnitude (on the grayscale image variant)
+\item four bits, whether a region touches a certain image boundary
+\item mean channel values for the HSV representation
+\item HSV color code histogram (with a dictionary of 1600 words)
+\item histogram of dense SIFT descriptors (with a 1000 words dictionary)
+\end{enumerate}
+
+This makes up a vector of 2608 elements to describe a region. The
+classification results are presented in the Table 2.
+
+\begin{table}
+
+
+\caption{Super-pixel data set statistics}
+
+
+\centering{}%
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ & Images & Foreground regions & Background regions & Total\tabularnewline
+\hline 
+\hline 
+Train & 150 & 41.66\% & 58.34\% & 9421\tabularnewline
+\hline 
+Test & 150 & 38.24\% & 61.76\% & 8863\tabularnewline
+\hline 
+\end{tabular}
+\end{table}
+\end{enumerate}
+
+
+
 \section{Boundary descriptors}
 
 \begin{figure}
