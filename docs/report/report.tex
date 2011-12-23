@@ -57,7 +57,7 @@ pertinent to test shape and boundaries descriptors.
 \section{Segmentation}
 
 The purpose of the segmentation stage is to find the sculpture region
-on an image. Our approach is similar to the one described in {[}???{]}.
+on an image. Our approach is similar to the one described in \cite{Arandjelovic11}.
 The high-level steps are: first, segmentation into super-pixels using
 a general-purpose segmentation engine; second, the segmented regions
 are classified as foreground and background. Below we present the
@@ -69,12 +69,12 @@ a region background or foreground) is extracted from the masks provided
 with Sculptures 6K. The train/test separation is half-half (more fine-grained
 statistics is found in Table 1).
 \item \textbf{Segmentation. }We use the state-of-the-art gPb segmentor from
-{[}???{]}. The probability threshold of 0.1 yields about 70-150 regions
-per image. It's worth noting that we have to downsample the input
-images in order to be able to run gPb. Even then it takes up to 2
-minutes to segment a single image.
+\cite{gpb}. The probability threshold of 0.1 yields about 70-150
+regions per image. It's worth noting that we have to downsample the
+input images in order to be able to run gPb. Even then it takes up
+to 2 minutes to segment a single image.
 \item \textbf{Classification. }We construct the feature vector similarly
-to {[}???{]} with minor deviations:
+to \cite{Arandjelovic11} with minor deviations:
 
 \begin{enumerate}
 \item mean gradient magnitude (on the grayscale image variant)
@@ -215,7 +215,7 @@ training the segmentation classifier, and a testing set, for everything else.
 To test the smooth object retrieval pipeline, $10$ sculptures of Henry Moore are
 chosen, with seven images for these sculptures. This sums up to $70$ queries. \\
 For each of these queries, a groundtruth is provided, listing the names of the
-\textit{positives} and of \textit{ignores}. The list of \textit{ignores} is
+\textit{positives} and of the \textit{ignores}. The list of \textit{ignores} is
 composed of pictures in which less of $25$\% of the sculpture is visible. The
 \textit{positives} list for a query only contains the sculpture that match
 both the shape (and not the texture) and the view points. That explains why
@@ -233,7 +233,7 @@ perfect. Yet, it yields much better results on smooth objects than previous
 methods. Hence, boundary descriptors can be considered as good representation
 of smooth objects, and shapes. Yet, the whole tool chain (segmentation + BoB)
 seems to be slow and memory consuming, mostly due to gPB segmentation part. \\
-More work can be done to extend this chain of algorithms to other type of
+Using GPU-based version of gPb could be beneficiary in terms of speed. More work can be done to extend this chain of algorithms to other type of
 smooth objects, such as semi transparent objects, but we can expect it to be
 also successful. \\
 
