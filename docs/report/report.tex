@@ -35,11 +35,11 @@ tolerant to lighting changes, scale changes and small viewpoints changes. In
 order to extract these descriptors on a image, a gPb segmentation of the images
 is first computed as described in \cite{gpb}.\\
 Finally, we will show the performance of this new technique using the
-sculpture 6k dataset, and the groundtruth provided for $70$ queries.}
+Sculptures 6k dataset, and the groundtruth provided for $70$ queries.}
 \end{abstract}
 
 \section{Introduction}
-Object recognition is one of the many very active field of vision. Extracting
+Object recognition is one of the many very fields of vision. Extracting
 viewpoints and lightning invariant descriptors is now done efficiently,
 allowing performant commercial applications. \\
 However, current methods fail on two type of objects: smooth objects and wiry
@@ -118,13 +118,13 @@ Test & 150 & 38.24\% & 61.76\% & 8863\tabularnewline
 \includegraphics[width=350px]{images/desc.png}
 \end{center}
 \caption{Boundary descriptors are extracted on a sampled edge, at different
-scale. A descriptor is composed of a HoG and a occupancy grid}
+scale. A descriptor is composed of a HoG and an occupancy grid}
 \end{figure}
 
 % \caption{The foreground occupancy mask is a grid, where the value of each
-% cell represents the ration of foreground pixels.}
+% cell represents the ratio of foreground pixels.}
 
-\cite{Arandjelovic11} presents a new shape descriptors, invariant to texture
+\cite{Arandjelovic11} presents a new shape descriptor (bag of boundaries, BoB), invariant to texture
 and color, but also lighting, scale and small viewpoints changes. It needs to
 be local, in order to be robust to partial occlusions. \\
 The boundary descriptors are formed of two descriptors: a Histogram of
@@ -134,7 +134,7 @@ part is 4 x 4 occupancy grid, representing the ratio of foreground pixels in
 each cell. It is then L1 normalized, and each element is squared root. The two
 descriptors are then concatenated, yielding a 340 element descriptor. \\
 Each descriptors is computed at three different scales, 1, 4, and 16 times
-1/10 of the background at interest points. This are computed  on the sampled
+1/10 of the foregound object area at interest points. These are computed  on the sampled
 edge, in the manner of \cite{BelongieMP02}, using a minimal distance between
 each interest points of 25 pixels.
 
@@ -191,7 +191,7 @@ negatives.
 \section{Conclusion}
 
 As the mAP shows, results with this new retrieval method are far from being
-perfect. Yet, it yield much better results on smooth objects than previous
+perfect. Yet, it yields much better results on smooth objects than previous
 methods. Hence, boundary descriptors can be considered as good representation
 of smooth objects, and shapes. Yet, the whole tool chain (segmentation + BoB)
 seems to be slow and memory consuming, mostly due to gPB segmentation part. \\
