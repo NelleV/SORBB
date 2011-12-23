@@ -105,7 +105,8 @@ using a very loose affine transformation, implemented using RANSAC (figure
 \score = \tfidf + \alpha n + \beta \frac{n}{n_q} \frac{n}{n_r}
 \end{equation*}
 
-We unfortunately did not have time to implement the reranking.
+Unfortunately, we did not have time to plug in the spatial verification in the
+whole toolchain.
 
 \begin{figure}
 \label{ransac}
@@ -119,8 +120,8 @@ We unfortunately did not have time to implement the reranking.
 
 The sculpture 6k dataset is divided into two: a training set, used for
 training the segmentation classifier, and a testing set, for everything else.
-To test the smooth object retrieval pipeline, 10 sculptures of Henry Moore are
-chosen, with seven images for these sculptures. This sums up to 70 queries. \\
+To test the smooth object retrieval pipeline, $10$ sculptures of Henry Moore are
+chosen, with seven images for these sculptures. This sums up to $70$ queries. \\
 For each of these queries, a groundtruth is provided, listing the names of the
 \textit{positives} and of \textit{ignores}. The list of \textit{ignores} is
 composed of pictures in which less of $25$\% of the sculpture is visible. The
@@ -128,11 +129,21 @@ composed of pictures in which less of $25$\% of the sculpture is visible. The
 both the shape (and not the texture) and the view points. That explains why
 the groundtruth varies from a query sculpture to another. \\
 The retrieval process is then evaluated using the average mean precision (mAP)
-over the 70 queries. The \textit{ignores} are neither counted as positives nor
+over the $70$ queries. The \textit{ignores} are neither counted as positives nor
 negatives.
 
-% Add results
+% TODO Add results
+
 \section{Conclusion}
+
+As the mAP shows, results with this new retrieval method are far from being
+perfect. Yet, it yield much better results on smooth objects than previous
+methods. Hence, boundary descriptors can be considered as good representation
+of smooth objects, and shapes. Yet, the whole tool chain (segmentation + BoB)
+seems to be slow and memory consuming, mostly due to gPB segmentation part. \\
+More work can be done to extend this chain of algorithms to other type of
+smooth objects, such as semi transparent objects, but we can expect it to be
+also successful. \\
 
 
 \bibliography{biblio.bib}
