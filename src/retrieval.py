@@ -204,12 +204,12 @@ def show_results(results, names, title=""):
         names: ndarray (.)
             image database.
     """
-    fig = plt.figure()
+    fig = plt.figure(title)
 
     for i, result in enumerate(results):
         if i == 20:
             break
-        image_name = names[result[0], 0]
+        image_name = names[i]
         image, _ = load.get_image(image_name)
 
         ax = fig.add_subplot(5, 4, i + 1)

@@ -11,7 +11,7 @@ def idf(term, document_count, ifreq):
     return math.log(float(document_count) / (1 + ifreq[term]))
 
 def compute_tf_idf_table():
-    documents = np.load("./data/histogram_database.mat")
+    documents = np.load("./data/all_postings.npy").transpose()
     document_count = documents.shape[0]
     word_count = documents.shape[1]
         
@@ -31,10 +31,13 @@ def compute_tf_idf_table():
         for term in range(word_count):
             tf_idf_table[document, term] = tf(term, document, freq, tfreq)*idf(term, document_count, ifreq)
 
-    tf_idf_table.dump("./data/tf_idf_table.mat")
-    ifreq.dump("./data/ifreq.mat")
+    tf_idf_table.dump("./data/tf_idf_table.npy")
+    ifreq.dump("./data/ifreq.npy")
 
-def search(query_document, tf_idf_table, ifreq, max_im = 20):
+tf_idf_table = np.load("./data/tf_idf_table.npy")
+ifreq = np.load("./data/ifreq.npy")
+
+def search(query_document, max_im = 20):
     def sim(v1, v2):
         if v1.sum() == 0 or v2.sum() == 0:
             return float("-inf")
@@ -42,7 +45,8 @@ def search(query_document, tf_idf_table, ifreq, max_im = 20):
     
     document_count = tf_idf_table.shape[0]
     word_count = tf_idf_table.shape[1]
-    freq = query_document
+    freq = np.zeros([1, len(query_document)])
+    freq[0,:] = query_document
     tfreq = np.array([query_document.sum()])
 
     query_tfidf = np.zeros(word_count)

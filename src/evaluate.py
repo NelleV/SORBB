@@ -1,112 +1,79 @@
 import numpy as np
+from sklearn.externals.joblib import Memory
 
 import load
 import retrieval
-import histograms
+import retrieval2
+from histograms import compute_visual_words
 from descriptors import compute_boundary_desc, get_interest_points
 
+ground_truth = load.read_gt()
 
-def perform_evaluation(max_im=None, verbose=False):
-    """
-    Performs evaluation
-    
-    FIXME: should only compute the mean precision, and not the whole pipeline
-    """
-    vocabulary = np.load('./data/vocabulary.mat')
-    #tf_idf_table = np.load('./data/tf_idf_table.mat')
-    #ifreq = np.load('./data/ifreq.mat')
-    postings = np.load('./data/postings.mat')
+mem = Memory(cachedir='.', verbose=False)
+voc = np.load('./data/vocabulary.npy')
+postings = np.load('./data/all_postings.npy')
+all_names = np.load('./data/all_names.npy')
 
-    #running on first 300 queries from training set
-    gen = load.load_data()
-    test_names = np.load('./data/images.npy')
-
-    best_prec = 0.0
-    best_results = 0.0
-    k = 0
-    mean_average_precision = 0.0
-    for test_query_index, (im, mask) in enumerate(gen):
-        if verbose:
-            if test_query_index % 10 == 0:
-                print "Computed %d images" % test_query_index
-
-        if max_im and test_query_index == max_im:
-            break
-
-        interest_points = get_interest_points(mask)
-        descriptor, _ = compute_boundary_desc(im, mask, interest_points)
-        if len(descriptor) == 0:
-            continue
-
-        k += 1
-        visual_words = histograms.compute_visual_words(descriptor, vocabulary)
-        search_results = retrieval.search(visual_words, postings)
-
-        # query_document = histograms.compute_histogram(im, mask, vocabulary)
-        # search_results = retrieval2.search(query_document,
-        #                                    tf_idf_table,
-        #                                    ifreq)
-
-        ave_prec = average_precision(test_query_index,
-                                     search_results[:, 0],
-                                     test_names)
-        mean_average_precision += ave_prec
-
-        if ave_prec > best_prec:
-            best_prec = ave_prec
-            best_results = search_results
-
-    mean_average_precision /= k
-    title = "%s mAP: %.2f" % (test_names[test_query_index],
-                              mean_average_precision)
-    print "mAP: %.2f" % (mean_average_precision, )
-    retrieval.show_results(best_results,
-                           test_names,
-                           title=title)
-
-
-def average_precision(test_query_index, search_results, test_names):
-    """
-    Computes average precision.
-    
-    FIXME: use arrays and not for loops as in test_evaluate.py
-    """
+def average_precision(search_file_names, positive_file_names, ignore_file_names):
     sum_prec = 0.0
     correct = 0
 
-    for i, search_result in enumerate(search_results):
-        is_true = label(test_names,
-                        search_result) == label(test_names,
-                                                test_query_index)
+    for i, search_result in enumerate(search_file_names):
+        is_true = (search_result not in ignore_file_names) and (search_result in positive_file_names) 
         if is_true:
             correct += 1
             sum_prec += float(correct) / (i + 1)
 
-    return sum_prec / len(search_results)
+    return sum_prec / len(search_file_names)
 
 
-def label(test_names, index):
-    """
-    Get the label of the name
+best_prec = float("-inf")
+best_results = None
+best_query_file_name = None
+best_search_file_names = None
+
+mean_average_precision = 0.0
+queries_total = 0
+max_im = None
+for test_query_index, query in enumerate(ground_truth):
+    if test_query_index % 10 == 0:
+        print "Computed %d images" % test_query_index
+    if max_im and test_query_index == max_im:
+        break
+
+    query_file_name = query.keys()[0]
+    positive_file_names = set(query.values()[0][0])
+    ignore_file_names = set(query.values()[0][1])
+
+    if query_file_name not in all_names:
+        continue
     
-    params
-    ------
-        test_names: ndarray (n, 1)
-            numpy array contained the name of the images used
-            
-        index: integer
-            index of the image we are looking for
-            
-    returns
-    -------
-        label deduced from the file name.
-        Careful! About 20% of the labels computed this way are false.
-        This need to be crossed-referenced with the ground truth file,
-        provided with the dataset.
-    """
-    file_name = test_names[index]
-    return "_".join(file_name.split("_")[:-1])
+    im, mask = load.get_image(query_file_name)
+    interest_points = mem.cache(get_interest_points)(mask)
+    desc, coords = mem.cache(compute_boundary_desc)(im, mask, interest_points)
+    visual_words = compute_visual_words(desc, voc)
+    if visual_words is None:
+        continue
 
+    #search_results = retrieval.search2(visual_words, postings, max_im=20)
+    query_document, _ = np.histogram(visual_words, bins=np.arange(len(voc) + 1))
+    search_results = retrieval2.search(query_document, max_im=20)
+    #search_results2 = mem.cache(search2)(visual_words,postings,max_im=20)
+    indices = search_results[:,0].astype(int)
+    search_file_names = all_names[indices]
+    queries_total += 1
+    
+    ave_prec = average_precision(search_file_names, positive_file_names, ignore_file_names)
+    mean_average_precision += ave_prec
+    print "Prec: ", ave_prec
+    if ave_prec > best_prec:
+        best_query_file_name = query_file_name
+        best_search_file_names = search_file_names
+        best_prec = ave_prec
+        best_results = search_results
+    #retrieval.show_results(best_results, best_search_file_names, "%s (%f) mAP: %.2f" % (best_query_file_name, best_prec, mean_average_precision))
+    
 
-if __name__ == "__main__":
-    perform_evaluation(max_im=100, verbose=True)
+mean_average_precision /= queries_total
+retrieval.show_results(best_results, best_search_file_names, "%s (%f) mAP: %.2f" % (best_query_file_name, best_prec, mean_average_precision))
+pass
