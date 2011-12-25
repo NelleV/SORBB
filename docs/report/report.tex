@@ -197,9 +197,6 @@ using a very loose affine transformation, implemented using RANSAC (figure
 \score = \tfidf + \alpha n + \beta \frac{n}{n_q} \frac{n}{n_r}
 \end{equation*}
 
-Unfortunately, we did not have time to plug in the spatial verification in the
-whole toolchain.
-
 \begin{figure}
 \label{ransac}
 \begin{center}
@@ -222,22 +219,36 @@ both the shape (and not the texture) and the view points. That explains why
 the groundtruth varies from a query sculpture to another. \\
 The retrieval process is then evaluated using the average mean precision (mAP)
 over the $70$ queries. The \textit{ignores} are neither counted as positives nor
-negatives.
+negatives. We were able to get mAP up to 0.17 (with or without spatial
+verification). Spatial verification did not prove to be effective in
+our system. We think the result is so poor because we use original
+image patches and not boundary probability maps to extract
+descriptors. In Figure 4 we display the search results sample without spatial verification. The query image is the located in the top-left corner. \\
 
-% TODO Add results
+\begin{figure}
+
+
+\caption{Results example}
+
+\begin{center}
+\includegraphics[height=8cm, width=12cm]{images/results.jpg}
+\end{center}
+
+\end{figure}
+
 
 \section{Conclusion}
 
 As the mAP shows, results with this new retrieval method are far from being
-perfect. Yet, it yields much better results on smooth objects than previous
+perfect and are much worse than ones presented in the \cite{Arandjelovic11}. Yet, it yields much better results on smooth objects than previous
 methods. Hence, boundary descriptors can be considered as good representation
 of smooth objects, and shapes. Yet, the whole tool chain (segmentation + BoB)
 seems to be slow and memory consuming, mostly due to gPB segmentation part. \\
 Using GPU-based version of gPb could be beneficiary in terms of speed. More work can be done to extend this chain of algorithms to other type of
-smooth objects, such as semi transparent objects, but we can expect it to be
+smooth objects, such as semi-transparent objects, but we can expect it to be
 also successful. \\
 
 
-\bibliography{biblio.bib}
+\bibliography{biblio}
 
 \end{document}
